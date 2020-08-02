@@ -10,7 +10,7 @@ Weather Dash utilizes a simple search bar that allows you to find and pin your f
 This app will also continue keeping track of your searched cities so you can access them as you need. 
 
 ## Images
-![app](appscreenshot.png)
+![screenshot](screenshot.png)
 
 ## Built With
 * [jQuery](https://api.jquery.com/)
