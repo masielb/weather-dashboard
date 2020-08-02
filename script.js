@@ -1,12 +1,10 @@
 
-var APIKey = "95d1f8c9874dee694f44538d063ccfc8";
-//var queryURL = "https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=95d1f8c9874dee694f44538d063ccfc8";
-
 $(document).ready(function() {
   $("#search-button").on("click", function() {
     var searchValue = $("#search-value").val();
-    
-    $("#search-value").val(""); // clears input box
+
+    // clear input box
+    $("#search-value").val("");
 
     searchWeather(searchValue);
   });
@@ -23,9 +21,10 @@ $(document).ready(function() {
   function searchWeather(searchValue) {
     $.ajax({
       type: "GET",
-      url: "https://api.openweathermap.org/data/2.5/weather?q=" + searchValue + "&appid=95d1f8c9874dee694f44538d063ccfc8",
+      url: "https://api.openweathermap.org/data/2.5/weather?q=" + searchValue + "&appid=9ad43bd7d81eeecac50dd047c44c95d9",
       dataType: "json",
-      success: function(data) {        
+      success: function(data) {
+        console.log(data);
         // create history link for this search
         if (history.indexOf(searchValue) === -1) {
           history.push(searchValue);
@@ -34,14 +33,15 @@ $(document).ready(function() {
           makeRow(searchValue);
         }
         
-        $("#today").empty(); // clears any old content
+        // clear any old content
+        $("#today").empty();
 
         // create html content for current weather
         var cardHeader = $("<div>").addClass("card-header");
         $("#today").append(cardHeader);
 
         var cardBodyDiv = $("<div>").addClass("card-body border");
-
+        
         // Add current city/country, date, and icon here
         var currentPlace = $("<span>").text(data.name + ", " + data.sys.country);
         cardHeader.append(currentPlace);
@@ -65,23 +65,23 @@ $(document).ready(function() {
 
         // merge and add to page
         $("#today").append(cardBodyDiv);
-
         // call follow-up api endpoints
         getForecast(searchValue);
         getUVIndex(data.coord.lat, data.coord.lon);
       }
     });
   }
-  
+
   function getForecast(searchValue) {
     $.ajax({
       type: "GET",
-      url: "" + searchValue + "",
+      url: "https://api.openweathermap.org/data/2.5/forecast?q=" + searchValue + "&appid=9ad43bd7d81eeecac50dd047c44c95d9",
       dataType: "json",
       success: function(data) {
         // overwrite any existing content with title and empty row
+        console.log(data);
         $("#forecast").html("<h4 class=\"mt-3\">5-Day Forecast:<h4>").append("<div class=\"row\">");
-
+        
         // loop over all forecasts (by 3-hour increments)
         for (var i = 0; i < data.list.length; i++) {
           // only look at forecasts around 3:00pm
@@ -102,6 +102,7 @@ $(document).ready(function() {
 
             // merge together and put on page
             col.append(card.append(body.append(title, img, p1, p2)));
+
             $("#forecast .row").append(col);
           }
         }
@@ -115,7 +116,7 @@ $(document).ready(function() {
       url: "https://api.openweathermap.org/data/2.5/uvi?appid=9ad43bd7d81eeecac50dd047c44c95d9&lat=" + lat + "&lon=" + lon,
       dataType: "json",
       success: function(data) {
-        var uv = $("<p>").text("UV Index: ");
+        var uv = $("<p>").addClass("pl-2 pt-2").text("UV Index: ");
         var btn = $("<span>").addClass("btn btn-sm").text(data.value);
         
         // change color depending on uv value
@@ -130,7 +131,7 @@ $(document).ready(function() {
         } else if (data.value <= 50) {
           btn.css("background-color", "purple");
         };
-
+        
         $("#today .card-body").append(uv.append(btn));
       }
     });
